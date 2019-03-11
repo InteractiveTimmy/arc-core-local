@@ -8,6 +8,12 @@ export default {
       indent: '\t',
     },
     {
+      format: 'umd',
+      name: 'ARCCORE',
+      file: 'examples/arc-core.js',
+      indent: '\t',
+    },
+    {
       format: 'es',
       file: 'build/arc-core.module.js',
       indent: '\t',
