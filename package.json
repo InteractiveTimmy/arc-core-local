@@ -1,0 +1,32 @@
+{
+  "name": "arc-core",
+  "version": "0.1.0",
+  "description": "JavaScript game engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**",
+    "start": "http-server examples -o",
+    "build": "rollup -c",
+    "watch": "rollup -c --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/InteractiveTimmy/arc-core.git"
+  },
+  "author": "InteractiveTimmy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/InteractiveTimmy/arc-core/issues"
+  },
+  "homepage": "https://github.com/InteractiveTimmy/arc-core#readme",
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "rollup": "^1.6.0"
+  },
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
