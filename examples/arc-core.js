@@ -237,26 +237,6 @@
 		Vec3: Vec3
 	});
 
-	var arcObject = {};
-
-	var component = {};
-
-	var entity = {};
-
-	var system = {};
-
-	var instance = {};
-
-
-
-	var index$2 = /*#__PURE__*/Object.freeze({
-		ArcObject: arcObject,
-		Component: component,
-		Entity: entity,
-		System: system,
-		Instance: instance
-	});
-
 	// http://stackoverflow.com/questions/105034/how-to-create-a-guid-uuid-in-javascript/21963136#21963136
 	// https://github.com/mrdoob/three.js/blob/dev/src/math/Math.js
 
@@ -282,14 +262,136 @@
 
 
 
-	var index$3 = /*#__PURE__*/Object.freeze({
+	var index$2 = /*#__PURE__*/Object.freeze({
 		uuid: uuid
+	});
+
+	let aoid = 0;
+
+	class ArcObject {
+	  constructor() {
+	    Object.defineProperties(this, {
+	      id: { value: aoid += 1 },
+	      uuid: { value: uuid() },
+	      isArcObject: { value: true },
+	    });
+	  }
+	}
+
+	class Component extends ArcObject {
+	  constructor() {
+	    super();
+
+	    Object.defineProperties(this, {
+	      isComponent: { value: true },
+	    });
+	  }
+	}
+
+	class Entity extends ArcObject {
+	  constructor() {
+	    super();
+
+	    Object.defineProperties(this, {
+	      isEntity: { value: true },
+	      components: { value: [] },
+	    });
+	  }
+	}
+
+	/* eslint-disable class-methods-use-this */
+
+	class System extends ArcObject {
+	  constructor() {
+	    super();
+
+	    Object.defineProperties(this, {
+	      isSystem: { value: true },
+	      components: { value: [] },
+	      entities: { value: [] },
+	    });
+	  }
+
+	  step(dt) {
+	    this.beforeUpdate(dt);
+	    this.onUpdate(dt);
+	    this.afterUpdate(dt);
+	  }
+
+	  beforeUpdate() {}
+
+	  onUpdate() {}
+
+	  afterUpdate() {}
+	}
+
+	/* eslint-disable class-methods-use-this */
+
+	class Instance extends ArcObject {
+	  constructor() {
+	    super();
+
+	    Object.defineProperties(this, {
+	      isInstance: { value: true },
+	      components: { value: [] },
+	      entities: { value: [] },
+	      systems: { value: [] },
+	      stats: {
+	        value: {
+	          dt: 0,
+	          pts: 0,
+	        },
+	      },
+	    });
+	  }
+
+	  load(...items) {
+
+	  }
+
+	  unload(...items) {
+
+	  }
+
+	  attach(entity, ...components) {
+
+	  }
+
+	  detach(entity, ...components) {
+
+	  }
+
+	  start() {
+	    while (true) {
+	      this.stats.dt = performance.now() - this.stats.pts;
+	      this.stats.pts = performance.now();
+	    }
+	  }
+
+	  stop() {
+
+	  }
+
+	  step() {
+	    console.log(this.stats.dt);
+	    setTimeout(() => { this.step(); }, 1000);
+	  }
+	}
+
+
+
+	var index$3 = /*#__PURE__*/Object.freeze({
+		ArcObject: ArcObject,
+		Component: Component,
+		Entity: Entity,
+		System: System,
+		Instance: Instance
 	});
 
 	exports.renderers = index;
 	exports.math = index$1;
-	exports.core = index$2;
-	exports.utils = index$3;
+	exports.core = index$3;
+	exports.utils = index$2;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
