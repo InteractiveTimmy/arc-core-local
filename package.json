@@ -5,7 +5,8 @@
   "main": "dist/arc-core.js",
   "types": "dist/arc-core.d.ts",
   "scripts": {
-    "build": "gulp build --gulpfile ./gulp/gulp.js --cwd ."
+    "build": "gulp build --gulpfile ./gulp/gulp.js --cwd .",
+    "clean": "gulp clean --gulpfile ./gulp/gulp.js --cwd ."
   },
   "repository": {
     "type": "git",
