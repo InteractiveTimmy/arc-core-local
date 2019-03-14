@@ -18,4 +18,12 @@ module.exports = {
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
     'lines-between-class-members': 'off',
   },
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+    },
+  },
 };
