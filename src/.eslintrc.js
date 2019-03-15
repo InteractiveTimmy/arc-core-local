@@ -20,6 +20,9 @@ module.exports = {
   rules: {
     'linebreak-style': ['error', process.platform === 'win32' ? 'windows' : 'unix'],
     'lines-between-class-members': 'off',
+    "indent": "off",
+    'max-len': ["error", { "code": 120 }],
+    "@typescript-eslint/indent": ["error", 2]
   },
   settings: {
     'import/resolver': {
