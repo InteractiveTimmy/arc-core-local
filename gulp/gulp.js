@@ -17,7 +17,7 @@ const { typescript, rollup, clean } = tasks;
 // general tasks
 task(typescript(gulp, plugins, confs));
 task(rollup(gulp, plugins, confs));
-task(clean(gulp, plugins, confs));
+task(clean(plugins));
 
 // complex tasks
-exports.build = series(clean(gulp, plugins), typescript(gulp, plugins, confs), rollup(gulp, plugins, confs));
+exports.build = series(clean(plugins), typescript(gulp, plugins, confs), rollup(gulp, plugins, confs));

@@ -1,6 +1,4 @@
-module.exports = (gulp, plugins) => {
-  const { src, dest } = gulp;
-
+module.exports = (plugins) => {
   const task = () => {
     const { del } = plugins;
 
