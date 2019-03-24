@@ -1,11 +1,11 @@
 import ArcObject from './arc-object';
-import Componet from './component';
+import Component from './component';
 import Entity from './entity';
 
 class System extends ArcObject {
   public readonly isSystem: boolean = true
   public entities: Entity[] = []
-  public components: Componet[] = []
+  public components: (() => Component)[] = []
 
   public onBeforeUpdate: (dt: number) => void
   public onUpdate: (dt: number) => void
@@ -27,6 +27,30 @@ class System extends ArcObject {
 
   protected afterUpdate(dt: number): void {
     this.onAfterUpdate(dt);
+  }
+
+  public loadEntity(...entities: Entity[]): System {
+    entities.forEach((entity) => {
+      if (this.canLoad(entity) && !this.entities.includes(entity)) {
+        this.entities.push(entity);
+      }
+    });
+
+    return this;
+  }
+
+  public unloadEntity(...entities: Entity[]): System {
+    entities.forEach((entity) => {
+      if (this.entities.includes(entity)) {
+        this.entities.splice(this.entities.indexOf(entity), 1);
+      }
+    });
+
+    return this;
+  }
+
+  public canLoad(entity: Entity): boolean {
+    return this.components.every(compSelf => entity.components.some(compEnt => compEnt instanceof compSelf));
   }
 }
 

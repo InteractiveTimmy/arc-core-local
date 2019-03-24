@@ -1,0 +1,91 @@
+<!-- started at 2pm -->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ArcCore</title>
+    <script src="./build/arc-core.js"></script>
+  </head>
+  <body>
+    <h1>ArcCore Example</h1>
+    <script>
+      const myArcCore = new ARCCORE.core.Instance();
+
+      function getComp(number) {
+        myComp = null;
+
+        switch (number) {
+          case 0:
+            myComp = myComponentA;
+            break;
+
+          case 1:
+            myComp = myComponentB;
+            break;
+
+          default:
+        }
+
+        return myComp;
+      }
+      /*
+      function genEntities(count) {
+        let output = [];
+        let myEnt;
+        let myComps = [];
+
+        for (let i = 0; i < count; i += 1) {
+          myComps.length = 0;
+
+          myEnt = new ARCCORE.core.Entity();
+          myArcCore.loadEntity(myEnt);
+
+          for (let j = 0; j < i % 2; j += 1) {
+            myComps.push(new getComp(j)(Math.random, Math.random, Math.random));
+            
+            myArcCore.loadComponent(myComps[j]);
+          }
+
+          myArcCore.bindComponent(myEnt, ...myComps);
+        }
+      }
+      */
+
+      class myComponentA extends ARCCORE.core.Component {
+        constructor(a, b, c) {
+          super();
+
+          this.a = a;
+          this.b = b;
+          this.c = c;
+        }
+      }
+
+      class myComponentB extends ARCCORE.core.Component {
+        constructor(x, y, z) {
+          super();
+
+          this.x = x;
+          this.y = y;
+          this.z = z;
+        }
+      }
+
+      class mySystemA extends ARCCORE.core.System {
+        constructor() {
+          this.components.push(
+            myComponentA
+          );
+        }
+
+        onUpdate(dt) {
+          console.log(dt, this.entities.length);
+        }
+      }
+
+
+    </script>
+  </body>
+</html>
