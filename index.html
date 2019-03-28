@@ -144,7 +144,15 @@
       myArcCore.loadSystem(...mySys);
       myArcCore.loadEntity(...myEnt);        
 
-      myArcCore.start();
+      function genMultiple(myClass, count, value = 1) {
+        const output = [];
+
+        for (let i = 0; i < count; i += 1) {
+          output.push(new myClass(value))
+        }
+
+        return output;
+      }
 
     </script>
   </body>
