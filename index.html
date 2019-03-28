@@ -14,44 +14,50 @@
       const myArcCore = new ARCCORE.core.Instance();
 
       function getComp(number) {
-        myComp = null;
+        myComp = [];
 
         switch (number) {
           case 0:
-            myComp = myComponentA;
+            myComp.push(new myComponentA(0, 0, 0));
             break;
 
           case 1:
-            myComp = myComponentB;
+            myComp.push(new myComponentB(0, 0, 0));
             break;
+
+          case 2:
+            myComp.push(new myComponentA(0, 0, 0));
+            myComp.push(new myComponentB(0, 0, 0));
 
           default:
         }
 
         return myComp;
       }
-      /*
+      
       function genEntities(count) {
         let output = [];
         let myEnt;
-        let myComps = [];
 
         for (let i = 0; i < count; i += 1) {
-          myComps.length = 0;
 
           myEnt = new ARCCORE.core.Entity();
-          myArcCore.loadEntity(myEnt);
 
-          for (let j = 0; j < i % 2; j += 1) {
-            myComps.push(new getComp(j)(Math.random, Math.random, Math.random));
-            
-            myArcCore.loadComponent(myComps[j]);
-          }
+          myEnt.load(...getComp(i % 3));
 
-          myArcCore.bindComponent(myEnt, ...myComps);
+          output.push(myEnt);
         }
+
+        return output;
       }
-      */
+
+      function genSystems() {
+        return [
+          new mySystemA(),
+          new mySystemB(),
+          new mySystemC(),
+        ];
+      }
 
       class myComponentA extends ARCCORE.core.Component {
         constructor(a, b, c) {
@@ -75,16 +81,70 @@
 
       class mySystemA extends ARCCORE.core.System {
         constructor() {
+          super();
+
           this.components.push(
             myComponentA
           );
         }
 
         onUpdate(dt) {
-          console.log(dt, this.entities.length);
+          this.entities.forEach((entity) => {
+            entity.reference.myComponentA.a += 1;
+            entity.reference.myComponentA.b += 1;
+            entity.reference.myComponentA.c += 1;
+          });
         }
       }
 
+      class mySystemB extends ARCCORE.core.System {
+        constructor() {
+          super();
+
+          this.components.push(
+            myComponentB
+          );
+        }
+
+        onUpdate(dt) {
+          this.entities.forEach((entity) => {
+            entity.reference.myComponentB.x += 1;
+            entity.reference.myComponentB.y += 1;
+            entity.reference.myComponentB.z += 1;
+          });
+        }
+      }
+
+      class mySystemC extends ARCCORE.core.System {
+        constructor() {
+          super();
+
+          this.components.push(
+            myComponentA,
+            myComponentB,
+          );
+        }
+
+        onUpdate(dt) {
+          this.entities.forEach((entity) => {
+            entity.reference.myComponentA.a = Math.random();
+            entity.reference.myComponentA.b = Math.random();
+            entity.reference.myComponentA.c = Math.random();
+
+            entity.reference.myComponentB.x = Math.random();
+            entity.reference.myComponentB.y = Math.random();
+            entity.reference.myComponentB.z = Math.random();
+          });
+        }
+      }
+
+      const myEnt = genEntities(50000);
+      const mySys = genSystems();
+
+      myArcCore.loadSystem(...mySys);
+      myArcCore.loadEntity(...myEnt);        
+
+      myArcCore.start();
 
     </script>
   </body>

@@ -5,12 +5,7 @@ import Component from './component';
 import Entity from './entity';
 import System from './system';
 
-interface Stats {
-  ready: boolean;
-  active: boolean;
-  prevTime: number;
-  deltaTime: number;
-}
+import { Stats, Reference } from '../types/interfaces/index';
 
 class Instance extends ArcObject {
   public readonly isInstance: boolean = true
@@ -18,6 +13,10 @@ class Instance extends ArcObject {
   public components: Component[] = []
   public entities: Entity[] = []
   public systems: System[] = []
+
+  public refComponents: Reference<Component> = {}
+  public refEntities: Reference<Entity> = {}
+  public refSystems: Reference<System> = {}
 
   public stats: Stats = {
     ready: false,
@@ -43,25 +42,45 @@ class Instance extends ArcObject {
     return null;
   }
 
-  public start(): void {
+  public start(): Instance {
     if (!this.stats.active) {
       this.stats.active = true;
       this.step();
     }
+
+    return this;
   }
 
-  public stop(): void {
+  public stop(): Instance {
     if (this.stats.active) { this.stats.active = false; }
+    return this;
   }
 
   public loadEntity(...entities: Entity[]): Instance {
+    let entUUID: string;
+    let compUUID: string;
+
     entities.forEach((entity) => {
-      if (!this.entities.includes(entity)) {
-        this.entities.push(entity);
+      entUUID = entity.uuid;
+
+      if (!this.refEntities[entUUID]) {
+        entity.loadParent(this);
 
         this.systems.forEach((system) => {
-          system.loadEntity(entity);
+          if (system.canLoad(entity)) {
+            system.loadEntity(entity);
+          }
         });
+
+        entity.components.forEach((component) => {
+          compUUID = component.uuid;
+
+          this.refComponents[compUUID] = component;
+          this.components.push(component);
+        });
+
+        this.refEntities[entUUID] = entity;
+        this.entities.push(entity);
       }
     });
 
@@ -69,50 +88,66 @@ class Instance extends ArcObject {
   }
 
   public unloadEntity(...entities: Entity[]): Instance {
+    let entUUID: string;
+    let compUUID: string;
+
     entities.forEach((entity) => {
-      if (this.entities.includes(entity)) {
-        this.entities.splice(this.entities.indexOf(entity), 1);
+      entUUID = entity.uuid;
+
+      if (this.refEntities[entUUID]) {
+        entity.unloadParent();
 
         this.systems.forEach((system) => {
-          system.unloadEntity(entity);
+          if (system.entities.includes(entity)) {
+            system.unloadEntity(entity);
+          }
         });
+
+        entity.components.forEach((component) => {
+          compUUID = component.uuid;
+
+          delete this.refComponents[compUUID];
+          this.components.splice(this.components.indexOf(component), 1);
+        });
+
+        delete this.refEntities[entUUID];
+        this.entities.splice(this.entities.indexOf(entity), 1);
       }
     });
 
     return this;
   }
 
-  public loadComponent(...components: Component[]): Instance {
-    components.forEach((component) => {
-      if (!this.components.includes(component)) {
-        this.components.push(component);
+  public loadSystem(...systems: System[]): Instance {
+    let sysUUID: string;
+
+    systems.forEach((system) => {
+      sysUUID = system.uuid;
+
+      if (!this.refSystems[sysUUID]) {
+        system.loadEntity(...this.entities);
+
+        this.refSystems[sysUUID] = system;
+        this.systems.push(system);
       }
     });
 
     return this;
   }
 
-  public unloadComponent(...components: Component[]): Instance {
-    components.forEach((component) => {
-      if (this.components.includes(component)) {
-        this.components.splice(this.components.indexOf(component), 1);
+  public unloadSystem(...systems: System[]): Instance {
+    let sysUUID: string;
+
+    systems.forEach((system) => {
+      sysUUID = system.uuid;
+
+      if (this.refSystems[sysUUID]) {
+        system.unloadEntity(...system.entities);
+
+        delete this.refSystems[sysUUID];
+        this.systems.splice(this.systems.indexOf(system), 1);
       }
     });
-
-    return this;
-  }
-
-  public bindComponent(entity: Entity, ...components: Component[]): Instance {
-    components.forEach((component) => {
-      if (!entity.components.some(entComp => component instanceof entComp.constructor)) {
-        entity.components.push(component);
-      }
-    });
-
-    this.systems.forEach((system) => {
-      system.loadEntity(entity);
-    });
-
     return this;
   }
 }

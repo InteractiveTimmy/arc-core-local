@@ -12,9 +12,15 @@ class System extends ArcObject {
   public onAfterUpdate: (dt: number) => void
 
   public step(dt: number): void {
-    this.beforeUpdate(dt);
-    this.onUpdate(dt);
-    this.afterUpdate(dt);
+    if (this.onBeforeUpdate) {
+      this.beforeUpdate(dt);
+    }
+    if (this.onUpdate) {
+      this.onUpdate(dt);
+    }
+    if (this.onAfterUpdate) {
+      this.onAfterUpdate(dt);
+    }
   }
 
   protected beforeUpdate(dt: number): void {
