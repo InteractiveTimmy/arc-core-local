@@ -26,11 +26,10 @@
  - `protected parent: Entity`
 
 ##### Instance *extends* ArcObject
- - `public readonly constructor(): Instance`
- - `public readonly isInstance: boolean = true`
- - `public readonly Modules: Module[] = []`
- - `public readonly Scenes: Scene[] = []`
- - `protected readonly Threads?: Thread[] = []` *when multithreading is enabled, contains a list of thread workers*
+ - `public readonly constructor(): Instance` *class constructor*
+ - `public readonly isInstance: boolean = true` *used to quickly determine if class object is or is instance of Instance*
+ - `public readonly Modules: Module[] = []` *contains a list of all enabled modules*
+ - `public readonly Scenes: Scene[] = []` *contains a list of loaded scenes*
 
 ##### Module *extends* ArcObject
  - `public readonly constructor(type: string): Module` *class constructor*
