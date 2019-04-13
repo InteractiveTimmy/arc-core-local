@@ -1,10 +1,10 @@
 import { clamp } from '../utils/math';
 
 export class Vec3 {
-  public readonly isVec3: boolean
-  public x: number
-  public y: number
-  public z: number
+  public readonly isVec3: boolean;
+  public x: number;
+  public y: number;
+  public z: number;
 
   public constructor(x: number, y: number, z: number) {
     this.x = x || 0;
