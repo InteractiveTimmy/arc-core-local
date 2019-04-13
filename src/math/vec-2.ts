@@ -132,6 +132,7 @@ export class Vec2 {
   // REVIEW: possibly unnecessary methods
   // lerpVectors()
   // setScalar()
+  // crossVectors()
 
   // TODO: needs to be created after Mat3 class is generated
   // applyMatrix3() NOTE: applies Mat3 to Vec2
