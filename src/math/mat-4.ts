@@ -1,8 +1,8 @@
 // TODO / REVIEW: 37 methods
 
 export class Mat4 {
-  public readonly elms: number[]; // REVIEW: to be 'elms' or 'elements'
   public readonly isMat4: boolean;
+  public readonly elms: number[]; // REVIEW: to be 'elms' or 'elements'
 
   public constructor() {
     this.elms = [];

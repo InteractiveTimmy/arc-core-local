@@ -1,11 +1,11 @@
 // TODO / REVIEW: 26 methods
 
 export class Quat {
+  public readonly isQuat: boolean;
   public x: number;
   public y: number;
   public z: number;
   public w: number;
-  public readonly isQuat: boolean;
 
   public constructor(x: number, y: number, z: number, w: number) {
     this.x = x || 0;

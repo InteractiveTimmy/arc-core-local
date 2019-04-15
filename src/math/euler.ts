@@ -1,11 +1,11 @@
 // TODO / REVIEW: 15 methods
 
 export class Euler {
+  public readonly isEuler: boolean;
   public x: number;
   public y: number;
   public z: number;
   public order: string; // TODO: give this a type for possible order
-  public readonly isEuler: boolean;
 
   public constructor(x: number, y: number, z: number, order: string) {
     this.x = x || 0;

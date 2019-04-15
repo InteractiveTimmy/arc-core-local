@@ -1,11 +1,11 @@
 // TODO / REVIEW: 48 methods
 
 export class Vec4 {
+  public readonly isVec4: boolean;
   public x: number;
   public y: number;
   public z: number;
   public w: number;
-  public readonly isVec4: boolean;
 
   public constructor(x: number, y: number, z: number, w: number) {
     this.x = x || 0;

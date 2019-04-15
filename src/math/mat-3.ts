@@ -1,6 +1,6 @@
 export class Mat3 {
-  public readonly elms: number[]; // REVIEW: to be 'elms' or 'elements'
   public readonly isMat3: boolean;
+  public readonly elms: number[]; // REVIEW: to be 'elms' or 'elements'
 
   public constructor() {
     this.elms = [];
