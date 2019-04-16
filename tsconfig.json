@@ -12,5 +12,9 @@
   },
   "include": [
     "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/modules/**/*.ts",
+    "src/core-old/**/*.ts"
   ]
 }
