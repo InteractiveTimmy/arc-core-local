@@ -7,7 +7,7 @@ export class Euler {
   public z: number;
   public order: string; // TODO: give this a type for possible order
 
-  public constructor(x: number, y: number, z: number, order: string) {
+  public constructor(x?: number, y?: number, z?: number, order?: string) {
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
