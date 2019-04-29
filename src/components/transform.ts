@@ -19,7 +19,5 @@ export class Transform extends Component {
     this.quaternion = new Quat();
     this.position = new Vec3();
     this.rotation = new Euler();
-
-    Object.seal(this);
   }
 }

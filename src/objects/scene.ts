@@ -16,11 +16,11 @@ export class Scene extends ArcObject {
     });
   }
 
-  public getEntities(...components: (() => Component)[]): Entity[] {
+  public getEntities(...components: Component['constructor'][]): Entity[] {
     return this.entities.filter(
       (entity: Entity): boolean => components.every(
-        (component: (() => Component)): boolean => (
-          entity.components[component.name.toLowerCase()] !== undefined
+        (component: Component['constructor']): boolean => (
+          entity.components[component.name.toLowerCase()] instanceof component
         ),
       ),
     );

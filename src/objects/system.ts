@@ -7,7 +7,7 @@ import { Instance } from './instance';
 export class System extends ArcObject {
   public readonly isSystem: boolean;
   public parent: Instance;
-  public components: (() => Component)[];
+  public components: Component['constructor'][];
 
   public constructor() {
     super();
