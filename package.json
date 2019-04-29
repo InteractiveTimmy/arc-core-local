@@ -8,7 +8,8 @@
     "typescript": "tsc",
     "rollup": "rollup -c rollup.config.js",
     "test": "jest",
-    "start": "node index.js"
+    "start": "node index.js",
+    "proto-general": "http-server ./prototype/general"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
+    "http-server": "^0.11.1",
     "jest": "^24.7.1",
     "rollup": "^1.9.0",
     "typescript": "^3.4.2"
