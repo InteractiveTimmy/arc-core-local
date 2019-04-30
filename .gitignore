@@ -1,7 +1,6 @@
+# Builds
 build/
 dist/
-test/
-old/
 
 # Logs
 logs

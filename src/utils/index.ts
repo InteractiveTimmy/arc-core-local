@@ -1,2 +1,5 @@
-/* eslint-disable import/prefer-default-export */
-export { default as uuid } from './uuid';
+import * as math from './math';
+
+export { uuid } from './uuid';
+
+export { math };

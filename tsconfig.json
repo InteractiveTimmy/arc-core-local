@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "module": "es6",
+    "target": "es2017",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "moduleResolution": "node",
+    "outDir": "./dist",
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/modules/**/*.ts",
+    "src/core-old/**/*.ts"
+  ]
+}

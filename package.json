@@ -1,13 +1,15 @@
 {
   "name": "arc-core",
   "version": "0.1.0",
-  "description": "JavaScript game engine",
+  "description": "JavaScript Game Engine",
   "main": "dist/arc-core.js",
   "types": "dist/arc-core.d.ts",
   "scripts": {
-    "build": "gulp build --gulpfile ./gulp/gulp.js --cwd .",
-    "clean": "gulp clean --gulpfile ./gulp/gulp.js --cwd .",
-    "start": "node index.js"
+    "typescript": "tsc",
+    "rollup": "rollup -c rollup.config.js",
+    "test": "jest",
+    "start": "node index.js",
+    "proto-general": "http-server ./prototype/general"
   },
   "repository": {
     "type": "git",
@@ -20,19 +22,14 @@
   },
   "homepage": "https://github.com/InteractiveTimmy/arc-core#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^1.4.2",
-    "@typescript-eslint/parser": "^1.4.2",
-    "del": "^4.0.0",
-    "eslint": "^5.15.1",
+    "@typescript-eslint/eslint-plugin": "^1.6.0",
+    "@typescript-eslint/parser": "^1.6.0",
+    "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "gulp": "^4.0.0",
-    "gulp-better-rollup": "^4.0.1",
-    "gulp-eslint": "^5.0.0",
-    "gulp-sourcemaps": "^2.6.5",
-    "gulp-typescript": "^5.0.1",
-    "rollup": "^1.6.0",
-    "typescript": "^3.3.3333"
-  },
-  "dependencies": {}
+    "http-server": "^0.11.1",
+    "jest": "^24.7.1",
+    "rollup": "^1.9.0",
+    "typescript": "^3.4.2"
+  }
 }

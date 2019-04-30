@@ -1,9 +1,13 @@
-/* eslint-disable import/prefer-default-export */
-
-// import * as renderers from './renderers/index';
 import * as math from './math/index';
-import * as core from './core/index';
+import * as objects from './objects/index';
 import * as utils from './utils/index';
-import * as proto from './proto/index';
+import * as components from './components/index';
+import * as systems from './systems/index';
 
-export { utils, math, core, proto };
+export {
+  components,
+  systems,
+  objects,
+  utils,
+  math,
+};
