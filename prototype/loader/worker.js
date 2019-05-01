@@ -47,13 +47,22 @@ class Loader {
     return new Promise((resolve, reject) => {
       const output = {};
       let gltf;
+      const root = url.split('/').slice(0, -1).join('/');
+      console.log(root);
+      let bin;
 
       this.load(url, 'json')
         .catch((e) => { reject(new Error(e)); })
-        .then(r => { gltf = r; console.log(gltf); return Promise.all(r.images.map(image => this.load(image.uri, 'arrayBuffer'))) })
+        .then(r => {
+          gltf = r;
+          bin = `${root}/`
+          console.log(gltf);
+          return Promise.all(r.images.map(image => this.load(image.uri, 'arrayBuffer')))
+        })
         .catch((e) => { reject(new Error(e)); })
-        .then((r) => { output.images = r; return this.load })
-        .then(() => { resolve(output); });
+        .then((r) => { output.images = r; return Promise.all(gltf.buffers.map(buffer => this.load(`${bin}/${buffer.uri}`, 'arrayBuffer')))})
+        .catch((e) => { reject(new Error(e)); })
+        .then((r) => { output.buffer = r; resolve(output); });
     });
   }
 
