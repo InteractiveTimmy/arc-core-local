@@ -6,6 +6,18 @@
 class Loader {
   constructor() {
     this.store = {};
+    this.cache = {};
+
+    this.sab = new SharedArrayBuffer(1024);
+    this.tab = new Uint32Array(this.sab);
+
+    postMessage({ type: 'sab', sab: this.sab });
+
+    setTimeout(() => {
+      this.tab[0] = 1337;
+
+      console.log('from webworker', this.sab);
+    }, 3000);
   }
 
   handle(payload) {
@@ -57,7 +69,11 @@ class Loader {
           gltf = r;
           bin = `${root}/`
           console.log(gltf);
-          return Promise.all(r.images.map(image => this.load(image.uri, 'arrayBuffer')))
+          return Promise.all(r.images.map(image => this.load(`${bin}${image.uri}`, 'arrayBuffer')))
+        })
+        .catch((e) => { reject(new Error(e)); })
+        .then((r) => {
+          output.images = r;
         })
         .catch((e) => { reject(new Error(e)); })
         .then((r) => { output.images = r; return Promise.all(gltf.buffers.map(buffer => this.load(`${bin}/${buffer.uri}`, 'arrayBuffer')))})
