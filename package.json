@@ -10,7 +10,8 @@
     "test": "jest",
     "start": "node index.js",
     "proto-general": "http-server ./prototype/general",
-    "proto-loader": "http-server ./prototype/loader"
+    "proto-loader": "http-server ./prototype/loader",
+    "proto-input": "http-server ./prototype/input"
   },
   "repository": {
     "type": "git",
