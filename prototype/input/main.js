@@ -20,7 +20,16 @@ class ModuleInput {
     this.active = false; // identifies if the pointer is locked or not
   }
 
-  get(name) { return this.inputs.find(input => input.name === name); }
+  get(name) {
+    let input = this.inputs.find(input => input.name === name);
+
+    if (!input) {
+      input = new Input(name);
+      this.inputs.push(input);
+    }
+
+    return input;
+  }
 
   handlePointerLock() {
     if (document.pointerLockElement === this.canvas) { this.active = true; }
@@ -77,8 +86,6 @@ class ModuleInput {
 
     if (e.type === 'keydown') { myInput.press(e.timeStamp); }
     else { myInput.depress(e.timeStamp); }
-
-    console.log(myInput);
   }
 
   handleMouseButton(e) {
@@ -117,13 +124,80 @@ class Input {
   }
 }
 
+class Shape {
+  constructor(x, y, w, h, c = '#eee') {
+    this.x = x;
+    this.y = y;
+    this.w = w;
+    this.h = h;
+    this.c = c;
+  }
+
+  draw(ctx) {
+    const { x, y, w, h, c } = this;
+    ctx.fillStyle = c;
+    ctx.rect(x, y, w, h);
+    ctx.fill();
+  }
+}
+
+class Renderer {
+  constructor(canvas) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.shapes = [];
+    this.active = false;
+
+    canvas.height = canvas.clientHeight;
+    canvas.width = canvas.clientWidth;
+  }
+
+  render() {
+    const { canvas, ctx } = this;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    this.shapes.forEach((shape) => {
+      shape.draw(ctx);
+    });
+    ctx.closePath();
+  }
+
+  loop() {
+    if (this.active) { requestAnimationFrame(() => { this.loop(); }); }
+    this.render();
+  }
+
+  start() {
+    if (!this.active) { this.active = true; this.loop(); }
+  }
+
+  stop() {
+    if (this.active) { this.active = false; }
+  }
+}
+
 function init() {
   const canvas = document.getElementById('app');
   const myModuleInput = new ModuleInput(canvas);
 
+  const myRenderer = new Renderer(canvas);
+  const myShape = new Shape(20, 20, 20, 20, '#ff0000');
+
+  myRenderer.shapes.push(myShape);
+
+  myRenderer.start();
+
+  myInputs = [
+    myModuleInput.get('A'),
+    myModuleInput.get('S'),
+    myModuleInput.get('D'),
+    myModuleInput.get('W'),
+  ];
+
+  myPrevValues = [0, 0, 0, 0];
+
   let myPreviousValue = 0;
-  let myValue = 0;
-  let myRate = 2;
+  let myRate = 10;
 
   let ptd = 0;
   let dt = 0;
@@ -132,140 +206,37 @@ function init() {
     ptd = performance.now() - dt;
     dt = performance.now();
 
-    if (myModuleInput.get('A')) {
-      const myInput = myModuleInput.get('A');
-
-      let delta = myInput.getValue() - myPreviousValue;
+    myInputs.forEach((input, i) => {
+      let delta = input.getValue() - myPrevValues[i];
       let change = delta / ptd;
-      
-      // let nextValue = myRate * (myInput.getValue() - myPreviousValue);
-      let normalizer = ptd;
-      // nextValue *= ptd / 1000;
-      // console.log({ change, delta });
-      
-      myValue += myRate * change;
-      myPreviousValue = myInput.getValue();
+      console.log(change);
+      console.log(delta);
 
-      console.log(myValue);
-    };
+      switch (i) {
+        case 0:
+          myShape.x -= myRate * change;
+          break;
+
+        case 1:
+          myShape.y += myRate * change;
+          break;
+
+        case 2:
+          myShape.x += myRate * change;
+          break;
+
+        case 3:
+          myShape.y -= myRate * change;
+          break;
+
+        default:
+      }
+
+      myPrevValues[i] = input.getValue();
+    });
     
-    setTimeout(() => { loop(); }, 1000);
+    setTimeout(() => { loop(); }, 100);
   }
 
   loop(0);
 }
-
-/*
-const keys = {}; // stores all key events
-let system;
-
-let dt;
-let lt;
-
-let elm;
-
-class System {
-  constructor(key, rate) {
-    this.key = key;
-    this.rate = rate;
-
-    this.lt;
-    this.value = 0;
-  }
-
-  step(dt, myKeys) {
-    if (myKeys[this.key].ds > this.lt) {
-      if (myKeys[this.key].us > this.lt) {
-        let mdt = myKeys[this.key].us - myKeys[this.key].ds;
-        console.log(mdt);
-      }
-    }
-    /*
-    if (myKeys[this.key].pressed) {
-      if (myKeys[this.key].stamp > this.lt) {
-        this.value += dt * (this.lt - myKeys[this.key].stamp) * this.rate;
-      } else {
-        this.value += dt * this.rate;
-      }
-    }
-
-    console.log(this.value);
-
-    this.lt = performance.now();
-  }
-}
-
-class Key {
-  constructor(code, name) {
-    this.code = code;
-    this.location = location;
-    this.name = name;
-    this.pressed;
-    this.pt;
-    this.ds;
-    this.us;
-    this.value = 0;
-  }
-
-  get() {
-
-  }
-
-  press(ts) {
-    this.pressed = true;
-    this.ds = ts;
-  }
-
-  release(ts) {
-    this.pressed = false;
-    this.us = ts;
-    this.pt = this.us - this.ds;
-    this.value += this.us - this.ds;
-  }
-}
-
-function init() {
-  system = new System('065', 1);
-  elm = document.querySelector('#app');
-
-  document.onkeydown = handleInput;
-  document.onkeyup = handleInput;
-  document.onmousemove = handleInput;
-  document.onmousedown = handleInput;
-  document.onmouseup = handleInput;
-
-  loop();
-}
-
-function handleInput(e) {
-  console.log(e);
-}
-
-function handleKey(e) {
-  e.preventDefault();
-  if (e.repeat) { return; }
-
-  let key = keys[`${e.location}${e.keyCode}`];
-
-  if (!key) {
-    keys[`${e.location}${e.keyCode}`] = new Key(`${e.location}${e.keyCode}`, e.code.split(/(?=[A-Z]|[0-9])/).join('-'));
-    key = keys[`${e.location}${e.keyCode}`];
-  }
-
-  if (e.type === 'keydown') { key.press(e.timeStamp); }
-  else { key.release(e.timeStamp); }
-}
-
-function loop() {
-  // requestAnimationFrame(() => loop());
-  setTimeout(() => { loop(); }, 1000);
-
-  dt = performance.now() - lt;
-  lt = performance.now();
-
-  // system.step(dt, keys);
-
-  
-  // console.log(keys['065'].value);
-}
-*/
