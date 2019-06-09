@@ -235,7 +235,7 @@ function init() {
       myPrevValues[i] = input.getValue();
     });
     
-    setTimeout(() => { loop(); }, 100);
+    setTimeout(() => { loop(); }, 0);
   }
 
   loop(0);
