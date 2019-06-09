@@ -11,7 +11,8 @@
     "start": "node index.js",
     "proto-general": "http-server ./prototype/general",
     "proto-loader": "http-server ./prototype/loader",
-    "proto-input": "http-server ./prototype/input"
+    "proto-input": "http-server ./prototype/input",
+    "proto-audio": "http-server ./prototype/sound"
   },
   "repository": {
     "type": "git",
