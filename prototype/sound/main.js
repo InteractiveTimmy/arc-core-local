@@ -193,8 +193,8 @@ function init() {
 
   Promise.all([
     getAudio('./audio/collision8-bit.ogg'),
-    getAudio('./audio/smallExplosion8-bit.ogg'),
-    getAudio('./audio/Heal8-bit.ogg'),
+    getAudio('./audio/smallexplosion8-bit.ogg'),
+    getAudio('./audio/heal8-bit.ogg'),
     getAudio('./audio/io.ogg')
   ]).then((r) => {
     const audio = files[3];
