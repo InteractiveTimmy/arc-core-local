@@ -20,10 +20,7 @@ import {
 } from './models/index';
 
 // utils
-import {
-  uuid,
-  math,
-} from './utils/index';
+import * as utils from './utils/index';
 
 // exports
 export {
@@ -45,6 +42,5 @@ export {
   Instance,
 
   // utils
-  uuid,
-  math,
+  utils,
 };

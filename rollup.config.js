@@ -1,5 +1,5 @@
 export default {
-	input: 'dist/arc-core.js',
+	input: 'dist/arc.js',
 	output: [
 		{
 			format: 'umd',
@@ -9,7 +9,7 @@ export default {
 		},
 		{
 			format: 'umd',
-			name: 'ArcCore',
+			name: 'Arc',
 			file: 'debug/arc.js',
 			indent: '\t'
 		},

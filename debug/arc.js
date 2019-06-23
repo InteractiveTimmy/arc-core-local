@@ -1,8 +1,234 @@
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory(global.ArcCore = {}));
+	(global = global || self, factory(global.Arc = {}));
 }(this, function (exports) { 'use strict';
+
+	function clamp(value, min, max) {
+	    return Math.max(min, Math.min(max, value));
+	}
+
+	var math = /*#__PURE__*/Object.freeze({
+		clamp: clamp
+	});
+
+	class Vec2 {
+	    constructor(x, y) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        Object.defineProperties(this, {
+	            isVec2: { value: true, writable: false },
+	        });
+	    }
+	    get width() { return this.x; }
+	    set width(width) { this.x = width; }
+	    get height() { return this.y; }
+	    set height(height) { this.y = height; }
+	    get length() { return Math.sqrt(this.x * this.x + this.y * this.y); }
+	    set length(length) { this.normalize().mulScalar(length); }
+	    clone() { return new Vec2(this.x, this.y); }
+	    copy(v) { this.x = v.x; this.y = v.y; return this; }
+	    equals(v) { return ((this.x === v.x) && (this.y === v.y)); }
+	    negate() { this.x = -this.x; this.y = -this.y; return this; }
+	    normalize() { return this.divScalar(this.length || 1); }
+	    add(v) { this.x += v.x; this.y += v.y; return this; }
+	    sub(v) { this.x -= v.x; this.y -= v.y; return this; }
+	    mul(v) { this.x *= v.x; this.y *= v.y; return this; }
+	    div(v) { this.x /= v.x; this.y /= v.y; return this; }
+	    addScalar(s) { this.x += s; this.y += s; return this; }
+	    subScalar(s) { this.x -= s; this.y -= s; return this; }
+	    mulScalar(s) { this.x *= s; this.y *= s; return this; }
+	    divScalar(s) { this.x /= s; this.y /= s; return this; }
+	    addVectors(v1, v2) { this.x = v1.x + v2.x; this.y = v1.y + v2.y; return this; }
+	    subVectors(v1, v2) { this.x = v1.x - v2.x; this.y = v1.y - v2.y; return this; }
+	    mulVectors(v1, v2) { this.x = v1.x * v2.x; this.y = v1.y * v2.y; return this; }
+	    divVectors(v1, v2) { this.x = v1.x / v2.x; this.y = v1.y / v2.y; return this; }
+	    lengthSquared() { return this.x * this.x + this.y * this.y; }
+	    lengthManhattan() { return Math.abs(this.x) + Math.abs(this.y); }
+	    dot(v) { return this.x * v.x + this.y * v.y; }
+	    cross(v) { return this.x * v.y - this.y * v.x; }
+	    min(v) { this.x = Math.min(this.x, v.x); this.y = Math.min(this.y, v.y); return this; }
+	    max(v) { this.x = Math.max(this.x, v.x); this.y = Math.max(this.y, v.y); return this; }
+	    floor() { this.x = Math.floor(this.x); this.y = Math.floor(this.y); return this; }
+	    ceil() { this.x = Math.ceil(this.x); this.y = Math.ceil(this.y); return this; }
+	    round() { this.x = Math.round(this.x); this.y = Math.round(this.y); return this; }
+	    roundToZero() {
+	        this.x = this.x < 0 ? Math.ceil(this.x) : Math.floor(this.x);
+	        this.y = this.y < 0 ? Math.ceil(this.y) : Math.floor(this.y);
+	        return this;
+	    }
+	    clamp(min, max) {
+	        this.x = clamp(this.x, min.x, max.x);
+	        this.y = clamp(this.y, min.y, max.y);
+	        return this;
+	    }
+	    clampScalar(min, max) {
+	        this.x = clamp(this.x, min, max);
+	        this.y = clamp(this.x, min, max);
+	        return this;
+	    }
+	    clampLength(min, max) {
+	        return this.divScalar(this.length || 1).mulScalar(clamp(this.length, min, max));
+	    }
+	    distanceTo(v) {
+	        const dx = this.x - v.x;
+	        const dy = this.y - v.y;
+	        return Math.sqrt(dx * dx + dy * dy);
+	    }
+	    distanceToSquared(v) {
+	        const dx = this.x - v.x;
+	        const dy = this.y - v.y;
+	        return dx * dx + dy * dy;
+	    }
+	    distanceToManhattan(v) {
+	        return Math.abs(this.x - v.x) + Math.abs(this.y - v.y);
+	    }
+	    lerp(v, a) {
+	        this.x += (v.x - this.x) * a;
+	        this.y += (v.y - this.y) * a;
+	        return this;
+	    }
+	    angle() {
+	        let angle = Math.atan2(this.y, this.x);
+	        if (angle < 0) {
+	            angle += 2 * Math.PI;
+	        }
+	        return angle;
+	    }
+	    rotateAround(center, angle) {
+	        const c = Math.cos(angle);
+	        const s = Math.sin(angle);
+	        const x = this.x - center.x;
+	        const y = this.y - center.y;
+	        this.x = x * c - y * s + center.x;
+	        this.y = x * s + y * c + center.y;
+	        return this;
+	    }
+	}
+
+	class Vec3 {
+	    constructor(x, y, z) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        this.z = z || 0;
+	        Object.defineProperties(this, {
+	            isVec3: { value: true, writable: false },
+	        });
+	    }
+	    get width() { return this.x; }
+	    set width(width) { this.x = width; }
+	    get height() { return this.y; }
+	    set height(height) { this.y = height; }
+	    get depth() { return this.z; }
+	    set depth(depth) { this.z = depth; }
+	    get length() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
+	    set length(length) { this.normalize().mulScalar(length); }
+	    set(x, y, z) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        this.z = z || 0;
+	        return this;
+	    }
+	    clone() { return new Vec3(this.x, this.y, this.z); }
+	    copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
+	    equals(v) { return (this.x === v.x && this.y === v.y && this.z === v.z); }
+	    normalize() { return this.divScalar(this.length || 1); }
+	    add(v) { this.x += v.x; this.y += v.y; this.z += v.z; return this; }
+	    sub(v) { this.x -= v.x; this.y -= v.y; this.z -= v.z; return this; }
+	    mul(v) { this.x *= v.x; this.y *= v.y; this.z *= v.z; return this; }
+	    div(v) { this.x /= v.x; this.y /= v.y; this.z /= v.z; return this; }
+	    addScalar(s) { this.x += s; this.y += s; this.z += s; return this; }
+	    subScalar(s) { this.x -= s; this.y -= s; this.z -= s; return this; }
+	    mulScalar(s) { this.x *= s; this.y *= s; this.z *= s; return this; }
+	    divScalar(s) { this.x /= s; this.y /= s; this.z /= s; return this; }
+	    dot(v) {
+	        return this.x * v.x + this.y * v.y + this.z * v.z;
+	    }
+	    cross(v) {
+	        this.x = this.y * v.z - this.z * v.y;
+	        this.y = this.z * v.x - this.x * v.z;
+	        this.z = this.x * v.y - this.y * v.x;
+	        return this;
+	    }
+	    max(v) { return this.set(Math.max(this.x, v.x), Math.max(this.y, v.y), Math.max(this.z, v.z)); }
+	    floor() { return this.set(Math.floor(this.x), Math.floor(this.y), Math.floor(this.z)); }
+	    ceil() { return this.set(Math.ceil(this.x), Math.ceil(this.y), Math.ceil(this.z)); }
+	    clamp(min, max) {
+	        return this.set(clamp(this.x, min.x, max.x), clamp(this.y, min.y, max.y), clamp(this.z, min.z, max.z));
+	    }
+	    lengthManhattan() {
+	        return Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z);
+	    }
+	    distanceTo(v) {
+	        const dx = this.x - v.x;
+	        const dy = this.y - v.y;
+	        const dz = this.z - v.z;
+	        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	    }
+	    distanceToManhattan(v) {
+	        return Math.abs(this.x - v.x) + Math.abs(this.y - v.y) + Math.abs(this.z - v.z);
+	    }
+	    lerp(v, a) {
+	        this.x += (v.x - this.x) * a;
+	        this.y += (v.y - this.y) * a;
+	        this.z += (v.z - this.z) * a;
+	        return this;
+	    }
+	}
+
+	class Vec4 {
+	    constructor(x, y, z, w) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        this.z = z || 0;
+	        this.w = w || 0;
+	        Object.defineProperties(this, {
+	            isVec4: { value: true, writable: false },
+	        });
+	    }
+	}
+
+	class Euler {
+	    constructor(x, y, z, order) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        this.z = z || 0;
+	        this.order = order || 'XYZ';
+	        Object.assign(this, {
+	            isEuler: { value: true, writable: false },
+	        });
+	    }
+	}
+
+	class Quat {
+	    constructor(x, y, z, w) {
+	        this.x = x || 0;
+	        this.y = y || 0;
+	        this.z = z || 0;
+	        this.w = (w !== undefined) ? w : 1;
+	        Object.defineProperties(this, {
+	            isQuat: { value: true, writable: false },
+	        });
+	    }
+	}
+
+	class Mat3 {
+	    constructor() {
+	        this.elms = [];
+	        Object.defineProperties(this, {
+	            isMat3: { value: true, writable: false },
+	        });
+	    }
+	}
+
+	class Mat4 {
+	    constructor() {
+	        this.elms = [];
+	        Object.defineProperties(this, {
+	            isMat4: { value: true, writable: false },
+	        });
+	    }
+	}
 
 	const lut = [];
 	for (let i = 0; i < 256; i += 1) {
@@ -204,15 +430,30 @@
 
 
 	var index = /*#__PURE__*/Object.freeze({
+		math: math,
+		uuid: uuid
+	});
+
+
+
+	var core = /*#__PURE__*/Object.freeze({
+		Vec2: Vec2,
+		Vec3: Vec3,
+		Vec4: Vec4,
+		Euler: Euler,
+		Quat: Quat,
+		Mat3: Mat3,
+		Mat4: Mat4,
 		ArcObject: ArcObject,
 		Component: Component,
 		Entity: Entity,
 		Scene: Scene,
 		System: System,
-		Instance: Instance
+		Instance: Instance,
+		utils: index
 	});
 
-	exports.objects = index;
+	exports.core = core;
 
 	Object.defineProperty(exports, '__esModule', { value: true });
 
