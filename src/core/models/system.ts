@@ -6,6 +6,8 @@ export class System extends ArcObject {
   public readonly isSystem: boolean;
   protected pParent: Instance;
 
+  public update: (s: Scene, dt: number) => void;
+
   public constructor() {
     super();
 
@@ -15,9 +17,6 @@ export class System extends ArcObject {
   }
 
   public get parent(): Instance { return this.pParent; }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, class-methods-use-this
-  public update(scene: Scene, dt: number): void {}
 
   public attach(instance: Instance): System {
     if (instance.isInstance && !this.pParent) { this.pParent = instance; }

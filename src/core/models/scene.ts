@@ -6,24 +6,16 @@ import { Entity } from './entity';
 export class Scene extends ArcObject {
   public readonly isScene: boolean;
   public readonly entities: Entity[];
+  public readonly components: Record<string, Entity[]>;
 
   public constructor() {
     super();
 
     Object.defineProperties(this, {
-      isScene: { value: true, writable: false },
-      entities: { value: [], writable: false },
+      isScene: { writable: false, value: true },
+      entities: { writable: false, value: [] },
+      components: { writable: false, value: {} },
     });
-  }
-
-  public getEntities(...components: Component['constructor'][]): Entity[] {
-    return this.entities.filter(
-      (entity: Entity): boolean => components.every(
-        (component: Component['constructor']): boolean => (
-          entity.components[component.name.toLowerCase()] instanceof component
-        ),
-      ),
-    );
   }
 
   public load(...entities: Entity[]): Scene {
@@ -34,6 +26,7 @@ export class Scene extends ArcObject {
         entity.attach(this);
       }
     });
+
     return this;
   }
 
@@ -44,6 +37,17 @@ export class Scene extends ArcObject {
         this.entities.splice(this.entities.indexOf(entity), 1);
       }
     });
+
     return this;
+  }
+
+  public getEntities(...components: Component['constructor'][]): Entity[] {
+    return this.entities.filter(
+      (entity: Entity): boolean => components.every(
+        (component: Component['constructor']): boolean => (
+          entity.components[component.name.toLowerCase()] instanceof component
+        ),
+      ),
+    );
   }
 }

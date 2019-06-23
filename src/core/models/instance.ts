@@ -12,22 +12,13 @@ export class Instance extends ArcObject {
   public constructor() {
     super();
 
+    Object.defineProperties(this, {
+      isInstance: { writable: false, value: true },
+      systems: { writable: false, value: [] },
+    });
+
     this.dt = 0;
     this.dts = 0;
-
-    Object.defineProperties(this, {
-      isInstance: { value: true, writable: false },
-      systems: { value: [], writable: false },
-    });
-  }
-
-  public update(scene: Scene): void {
-    this.dt = (performance.now() - this.dts) / 1000;
-    this.dts = performance.now();
-
-    this.systems.forEach((system: System): void => {
-      system.update(scene, this.dt);
-    });
   }
 
   public load(...systems: System[]): Instance {
@@ -38,6 +29,7 @@ export class Instance extends ArcObject {
         system.attach(this);
       }
     });
+
     return this;
   }
 
@@ -48,6 +40,16 @@ export class Instance extends ArcObject {
         this.systems.splice(this.systems.indexOf(system), 1);
       }
     });
+
     return this;
+  }
+
+  public update(scene: Scene): void {
+    this.dt = (performance.now() - this.dts) / 1000;
+    this.dts = performance.now();
+
+    this.systems.forEach((system: System): void => {
+      system.update(scene, this.dt);
+    });
   }
 }

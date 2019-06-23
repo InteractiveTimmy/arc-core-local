@@ -11,8 +11,8 @@ export class Entity extends ArcObject {
     super();
 
     Object.defineProperties(this, {
-      isEntity: { value: true, writable: false },
-      components: { value: {}, writable: false },
+      isEntity: { writable: false, value: true },
+      components: { writable: false, value: {} },
     });
   }
 

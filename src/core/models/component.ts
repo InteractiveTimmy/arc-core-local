@@ -19,11 +19,13 @@ export class Component extends ArcObject {
 
   public attach(entity: Entity): Component {
     if (entity.isEntity && !this.pParent) { this.pParent = entity; }
+
     return this;
   }
 
   public detach(): Component {
     if (this.pParent) { this.pParent = null; }
+
     return this;
   }
 }

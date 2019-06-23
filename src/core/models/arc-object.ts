@@ -6,8 +6,8 @@ export class ArcObject {
 
   public constructor() {
     Object.defineProperties(this, {
-      isArcObject: { value: true, writable: false },
-      uuid: { value: uuid(), writable: false },
+      isArcObject: { writable: false, value: true },
+      uuid: { writable: false, value: uuid() },
     });
   }
 }
