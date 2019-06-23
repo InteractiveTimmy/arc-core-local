@@ -3,19 +3,19 @@ export default {
 	output: [
 		{
 			format: 'umd',
-			name: 'ArcCore',
-			file: 'build/arc-core.js',
+			name: 'Arc',
+			file: 'build/arc.js',
 			indent: '\t'
 		},
 		{
 			format: 'umd',
 			name: 'ArcCore',
-			file: 'debug/arc-core.js',
+			file: 'debug/arc.js',
 			indent: '\t'
 		},
 		{
 			format: 'es',
-			file: 'build/arc-core.module.js',
+			file: 'build/arc.module.js',
 			indent: '\t'
 		}
 	],

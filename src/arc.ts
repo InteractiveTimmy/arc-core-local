@@ -14,6 +14,6 @@ export {
 };
 */
 
-import * as objects from './objects/index';
+import * as core from './core/core';
 
-export { objects };
+export { core };
