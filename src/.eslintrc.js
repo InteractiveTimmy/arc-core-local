@@ -25,6 +25,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'lines-between-class-members': 'off',
     'indent': 'off',
+    'no-param-reassign': 0,
     'max-len': ['error', { 'code': 120 }],
     '@typescript-eslint/indent': ['error', 2],
   },

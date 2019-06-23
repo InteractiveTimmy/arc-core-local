@@ -29,7 +29,7 @@ export class Scene extends ArcObject {
   public load(...entities: Entity[]): Scene {
     entities.forEach((entity: Entity): void => {
       if (entity.isEntity && !this.entities.includes(entity)) {
-        if (entity.parent) { entity.detach(); }
+        if (entity.parent) { entity.parent.unload(entity); entity.detach(); }
         this.entities.push(entity);
         entity.attach(this);
       }

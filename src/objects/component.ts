@@ -1,11 +1,10 @@
-// dependencies
 import { ArcObject } from './arc-object';
 import { Entity } from './entity';
 
 export class Component extends ArcObject {
   public readonly isComponent: boolean;
   public readonly type: string;
-  public parent: Entity;
+  protected pParent: Entity;
 
   public constructor() {
     super();
@@ -16,17 +15,15 @@ export class Component extends ArcObject {
     });
   }
 
+  public get parent(): Entity { return this.pParent; }
+
   public attach(entity: Entity): Component {
-    if (entity.isEntity) {
-      if (this.parent) { this.parent.unload(this); }
-      this.parent = entity;
-    }
+    if (entity.isEntity && !this.pParent) { this.pParent = entity; }
     return this;
   }
 
   public detach(): Component {
-    if (this.parent) { this.parent.unload(this); }
-    this.parent = null;
+    if (this.pParent) { this.pParent = null; }
     return this;
   }
 }

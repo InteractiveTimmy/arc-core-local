@@ -33,7 +33,7 @@ export class Instance extends ArcObject {
   public load(...systems: System[]): Instance {
     systems.forEach((system: System): void => {
       if (system.isSystem && !this.systems.includes(system)) {
-        if (system.parent) { system.detach(); }
+        if (system.parent) { system.parent.unload(system); system.detach(); }
         this.systems.push(system);
         system.attach(this);
       }

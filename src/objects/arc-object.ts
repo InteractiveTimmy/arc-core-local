@@ -1,4 +1,3 @@
-// dependencies
 import { uuid } from '../utils/uuid';
 
 export class ArcObject {
