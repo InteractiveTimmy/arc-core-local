@@ -6,14 +6,13 @@
   "types": "dist/arc-core.d.ts",
   "scripts": {
     "typescript": "tsc",
+    "typescript-watch": "tsc --watch",
     "rollup": "rollup -c rollup.config.js",
+    "rollup-watch": "rollup -c rollup.config.js --watch",
     "test": "jest",
-    "start": "node index.js",
-    "proto-general": "serve ./prototype/general",
-    "proto-loader": "serve ./prototype/loader",
-    "proto-input": "serve ./prototype/input",
-    "proto-audio": "serve ./prototype/sound",
-    "proto-threads": "serve ./prototype/threading"
+    "start": "serve ./prototype",
+    "debug": "serve ./debug",
+    "prototypes": "serve ./prototype"
   },
   "repository": {
     "type": "git",
@@ -31,10 +30,9 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "http-server": "^0.11.1",
     "jest": "^24.7.1",
     "rollup": "^1.9.0",
-    "serve": "^11.0.1",
+    "serve": "^11.0.2",
     "typescript": "^3.4.2"
   }
 }
