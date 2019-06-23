@@ -1,7 +1,7 @@
 # ArcCore
 
 ## Class Design
-```JavaScript
+```typescript
 // import
 import { something } from './something.ts';
 
