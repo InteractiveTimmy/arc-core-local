@@ -15,6 +15,29 @@ Thread-C --- Physics;
 Thread-D --- Graphics-Renderer;
 ```
 
+### Element Layout
+```mermaid
+graph TD;
+  subgraph Containers;
+    worker(Worker);
+    primary(Primary);
+  end;
+
+  subgraph Threads;
+    controller(Controller);
+  end;
+
+  subgraph Modules;
+    audio(Audio);
+    input(Input);
+    graphics(Graphics);
+    loader(Loader);
+    cache(Cache);
+    logic(Logic);
+    physics(Physics);
+  end;
+```
+
 ### Input
 ```mermaid
 graph TD;
