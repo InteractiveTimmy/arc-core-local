@@ -20,11 +20,13 @@ export class Entity extends ArcObject {
 
   public attach(scene: Scene): Entity {
     if (scene.isScene && !this.pParent) { this.pParent = scene; }
+
     return this;
   }
 
   public detach(): Entity {
     if (this.pParent) { this.pParent = null; }
+
     return this;
   }
 
@@ -34,8 +36,10 @@ export class Entity extends ArcObject {
         if (component.parent) { component.parent.unload(component); component.detach(); }
         this.components[component.type] = component;
         component.attach(this);
+        if (this.pParent) { this.pParent.index(this, component); }
       }
     });
+
     return this;
   }
 
@@ -46,6 +50,7 @@ export class Entity extends ArcObject {
         delete this.components[component.type];
       }
     });
+
     return this;
   }
 }

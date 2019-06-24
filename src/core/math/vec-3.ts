@@ -5,38 +5,43 @@ import { clamp } from '../utils/math';
 
 export class Vec3 {
   public readonly isVec3: boolean;
-  public x: number;
-  public y: number;
-  public z: number;
+  protected pSharedBuffer: SharedArrayBuffer;
+  protected pArrayBuffer: Float64Array;
 
-  public constructor(x?: number, y?: number, z?: number) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-
+  public constructor(buffer?: SharedArrayBuffer) {
     Object.defineProperties(this, {
-      isVec3: { value: true, writable: false },
+      isVec3: { writable: false, value: true },
+      pSharedBuffer: { writable: false, value: buffer || new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 3) },
+      pArrayBuffer: { writable: false, value: new Float64Array(this.pSharedBuffer) },
     });
+
+    Object.seal(this);
   }
 
-  public get width(): number { return this.x; }
-  public set width(width: number) { this.x = width; }
-  public get height(): number { return this.y; }
-  public set height(height: number) { this.y = height; }
-  public get depth(): number { return this.z; }
-  public set depth(depth: number) { this.z = depth; }
+  public get x(): number { return this.pArrayBuffer[0]; }
+  public set x(value: number) { this.pArrayBuffer[0] = value; }
+  public get y(): number { return this.pArrayBuffer[1]; }
+  public set y(value: number) { this.pArrayBuffer[1] = value; }
+  public get z(): number { return this.pArrayBuffer[2]; }
+  public set z(value: number) { this.pArrayBuffer[2] = value; }
+
   public get length(): number { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
   public set length(length: number) { this.normalize().mulScalar(length); }
 
   public set(x: number, y: number, z: number): Vec3 {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
+    this.pArrayBuffer[0] = x || 0;
+    this.pArrayBuffer[1] = y || 0;
+    this.pArrayBuffer[2] = z || 0;
 
     return this;
   }
 
-  public clone(): Vec3 { return new Vec3(this.x, this.y, this.z); }
+  public clone(): Vec3 {
+    const buffer = new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 3);
+    const v = new Vec3(buffer);
+    v.set(this.pArrayBuffer[0], this.pArrayBuffer[1], this.pArrayBuffer[2]);
+    return v;
+  }
   public copy(v: Vec3): Vec3 { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
   public equals(v: Vec3): boolean { return (this.x === v.x && this.y === v.y && this.z === v.z); }
   // public negate()
