@@ -107,29 +107,34 @@
 	}
 
 	class Vec3 {
-	    constructor(x, y, z) {
-	        this.x = x || 0;
-	        this.y = y || 0;
-	        this.z = z || 0;
+	    constructor(buffer) {
 	        Object.defineProperties(this, {
-	            isVec3: { value: true, writable: false },
+	            isVec3: { writable: false, value: true },
+	            pSharedBuffer: { writable: false, value: buffer || new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 3) },
+	            pArrayBuffer: { writable: false, value: new Float64Array(this.pSharedBuffer) },
 	        });
+	        Object.seal(this);
 	    }
-	    get width() { return this.x; }
-	    set width(width) { this.x = width; }
-	    get height() { return this.y; }
-	    set height(height) { this.y = height; }
-	    get depth() { return this.z; }
-	    set depth(depth) { this.z = depth; }
+	    get x() { return this.pArrayBuffer[0]; }
+	    set x(value) { this.pArrayBuffer[0] = value; }
+	    get y() { return this.pArrayBuffer[1]; }
+	    set y(value) { this.pArrayBuffer[1] = value; }
+	    get z() { return this.pArrayBuffer[2]; }
+	    set z(value) { this.pArrayBuffer[2] = value; }
 	    get length() { return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z); }
 	    set length(length) { this.normalize().mulScalar(length); }
 	    set(x, y, z) {
-	        this.x = x || 0;
-	        this.y = y || 0;
-	        this.z = z || 0;
+	        this.pArrayBuffer[0] = x || 0;
+	        this.pArrayBuffer[1] = y || 0;
+	        this.pArrayBuffer[2] = z || 0;
 	        return this;
 	    }
-	    clone() { return new Vec3(this.x, this.y, this.z); }
+	    clone() {
+	        const buffer = new SharedArrayBuffer(Float64Array.BYTES_PER_ELEMENT * 3);
+	        const v = new Vec3(buffer);
+	        v.set(this.pArrayBuffer[0], this.pArrayBuffer[1], this.pArrayBuffer[2]);
+	        return v;
+	    }
 	    copy(v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; }
 	    equals(v) { return (this.x === v.x && this.y === v.y && this.z === v.z); }
 	    normalize() { return this.divScalar(this.length || 1); }
@@ -248,8 +253,8 @@
 	class ArcObject {
 	    constructor() {
 	        Object.defineProperties(this, {
-	            isArcObject: { value: true, writable: false },
-	            uuid: { value: uuid(), writable: false },
+	            isArcObject: { writable: false, value: true },
+	            uuid: { writable: false, value: uuid() },
 	        });
 	    }
 	}
@@ -281,8 +286,8 @@
 	    constructor() {
 	        super();
 	        Object.defineProperties(this, {
-	            isEntity: { value: true, writable: false },
-	            components: { value: {}, writable: false },
+	            isEntity: { writable: false, value: true },
+	            components: { writable: false, value: {} },
 	        });
 	    }
 	    get parent() { return this.pParent; }
@@ -307,6 +312,9 @@
 	                }
 	                this.components[component.type] = component;
 	                component.attach(this);
+	                if (this.pParent) {
+	                    this.pParent.index(this, component);
+	                }
 	            }
 	        });
 	        return this;
@@ -328,12 +336,50 @@
 	    constructor() {
 	        super();
 	        Object.defineProperties(this, {
-	            isScene: { value: true, writable: false },
-	            entities: { value: [], writable: false },
+	            isScene: { writable: false, value: true },
+	            entities: { writable: false, value: [] },
+	            components: { writable: false, value: {} },
 	        });
 	    }
-	    getEntities(...components) {
-	        return this.entities.filter((entity) => components.every((component) => (entity.components[component.name.toLowerCase()] instanceof component)));
+	    index(entity, component) {
+	        if (component) {
+	            const key = component.constructor.name;
+	            if (!this.components[key]) {
+	                this.components[key] = [];
+	            }
+	            this.components[key].push(entity);
+	        }
+	        else {
+	            Object.keys(entity.components).forEach((key) => {
+	                if (!this.components[key]) {
+	                    this.components[key] = [];
+	                }
+	                if (!this.components[key].includes(entity)) {
+	                    this.components[key].push(entity);
+	                }
+	            });
+	        }
+	        return this;
+	    }
+	    unindex(entity, component) {
+	        if (component) {
+	            const key = component.constructor.name;
+	            if (!this.components[key]) {
+	                this.components[key] = [];
+	            }
+	            this.components[key].splice(this.components[key].indexOf(entity), 1);
+	        }
+	        else {
+	            Object.keys(entity.components).forEach((key) => {
+	                if (!this.components[key]) {
+	                    this.components[key] = [];
+	                }
+	                if (this.components[key].includes(entity)) {
+	                    this.components[key].splice(this.components[key].indexOf(entity), 1);
+	                }
+	            });
+	        }
+	        return this;
 	    }
 	    load(...entities) {
 	        entities.forEach((entity) => {
@@ -342,6 +388,7 @@
 	                    entity.parent.unload(entity);
 	                    entity.detach();
 	                }
+	                this.index(entity);
 	                this.entities.push(entity);
 	                entity.attach(this);
 	            }
@@ -354,10 +401,15 @@
 	                if (entity.parent === this) {
 	                    entity.detach();
 	                }
+	                this.unindex(entity);
 	                this.entities.splice(this.entities.indexOf(entity), 1);
 	            }
 	        });
 	        return this;
+	    }
+	    getEntities(...components) {
+	        const keys = components.map((component) => component.name.toLowerCase());
+	        return this.entities.filter((entity) => keys.every((key) => key in entity.components));
 	    }
 	}
 
@@ -369,7 +421,6 @@
 	        });
 	    }
 	    get parent() { return this.pParent; }
-	    update(scene, dt) { }
 	    attach(instance) {
 	        if (instance.isInstance && !this.pParent) {
 	            this.pParent = instance;
@@ -387,19 +438,12 @@
 	class Instance extends ArcObject {
 	    constructor() {
 	        super();
+	        Object.defineProperties(this, {
+	            isInstance: { writable: false, value: true },
+	            systems: { writable: false, value: [] },
+	        });
 	        this.dt = 0;
 	        this.dts = 0;
-	        Object.defineProperties(this, {
-	            isInstance: { value: true, writable: false },
-	            systems: { value: [], writable: false },
-	        });
-	    }
-	    update(scene) {
-	        this.dt = (performance.now() - this.dts) / 1000;
-	        this.dts = performance.now();
-	        this.systems.forEach((system) => {
-	            system.update(scene, this.dt);
-	        });
 	    }
 	    load(...systems) {
 	        systems.forEach((system) => {
@@ -424,6 +468,13 @@
 	            }
 	        });
 	        return this;
+	    }
+	    update(scene) {
+	        this.dt = (performance.now() - this.dts) / 1000;
+	        this.dts = performance.now();
+	        this.systems.forEach((system) => {
+	            system.update(scene, this.dt);
+	        });
 	    }
 	}
 
